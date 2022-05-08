@@ -33,8 +33,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d(TAG, "onCreate() called with: savedInstanceState = $savedInstanceState")
-
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_button)
@@ -87,9 +85,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (isEnd) {
-            var percTrue = (trueAnswers * 100)/questionBank.size
+            var percentTrue = (trueAnswers * 100)/questionBank.size
 
-            Toast.makeText(this,"Вы ответили правильно на $percTrue% вопросов",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"Вы ответили правильно на $percentTrue% вопросов",Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -99,18 +97,10 @@ class MainActivity : AppCompatActivity() {
         resources.getString(R.string.incorrect_toast)
     }
 
-    private fun checkAnswer(userAnswer: Boolean) {
-        questionTextView.text = questionTextView.text.toString()+"\n"+getResultAnswer(userAnswer)
-    }
-
     private fun setUserAnswer(userAnswer: Boolean){
         questionBank[currentIndex].userAnswer=userAnswer
 
-        checkAnswer(userAnswer)
-
-        trueButton.isEnabled = false
-        falseButton.isEnabled = false
-
+        updateQuestion()
         checkEndAndShowResult()
     }
 
@@ -119,7 +109,13 @@ class MainActivity : AppCompatActivity() {
 
         var uiQuestion = "${currentIndex+1}. $nameQuestion"
         if (questionBank[currentIndex].userAnswer!=null) {
-            uiQuestion=uiQuestion+"\n"+getResultAnswer(questionBank[currentIndex].userAnswer!!)
+            val userAnswer = if (questionBank[currentIndex].userAnswer!!){
+                resources.getString(R.string.true_button)
+            } else {
+                resources.getString(R.string.false_button)
+            }
+
+            uiQuestion=uiQuestion+"\n\n"+"Вы ответили \""+userAnswer+"\" - "+getResultAnswer(questionBank[currentIndex].userAnswer!!)
         }
 
         questionTextView.text = uiQuestion
