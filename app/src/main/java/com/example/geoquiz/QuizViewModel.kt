@@ -4,12 +4,17 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 
-private const val TAG="ololo QuizViewModel"
+private const val TAG="QuizViewModel"
 
 class QuizViewModel: ViewModel() {
 
     var currentIndex = 0
     var percentTrueAnswers = -1
+    var isCheater: Boolean
+        set(value){
+            questionBank[currentIndex].isCheater = value
+        }
+        get()=questionBank[currentIndex].isCheater
 
     private val questionBank = listOf(
         Question(R.string.question_australia,true),
