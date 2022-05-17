@@ -8,11 +8,13 @@ private const val TAG="QuizViewModel"
 
 class QuizViewModel: ViewModel() {
 
+    var numberOfHints = 3
     var currentIndex = 0
     var percentTrueAnswers = -1
     var isCheater: Boolean
         set(value){
             questionBank[currentIndex].isCheater = value
+            numberOfHints -= 1
         }
         get()=questionBank[currentIndex].isCheater
 

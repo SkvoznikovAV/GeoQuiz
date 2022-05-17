@@ -1,6 +1,7 @@
 package com.example.geoquiz
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prevButton: ImageButton
     private lateinit var questionTextView: TextView
     private lateinit var cheatButton: Button
+    private lateinit var numberOfHintsTextView : TextView
 
     private val quizViewModel: QuizViewModel by lazy {
         ViewModelProvider(this).get(QuizViewModel::class.java)
@@ -80,8 +82,12 @@ class MainActivity : AppCompatActivity() {
         cheatButton = findViewById(R.id.cheat_button)
         cheatButton.setOnClickListener {
             val intent = CheatActivity.newIntent(this@MainActivity,quizViewModel.currentQuestionAnswer)
+            //val options = ActivityOptions.makeClipRevealAnimation(it, 0, 0, it.width, it.height)
+            //startActivityForResult(intent, REQUEST_CODE_CHEAT,options.toBundle())
             startActivityForResult(intent, REQUEST_CODE_CHEAT)
         }
+
+        numberOfHintsTextView = findViewById(R.id.numbers_of_hints_text_view)
 
     }
 
@@ -125,11 +131,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (quizViewModel.isCheater){
-            uiQuestion += "\n\nТы подсмотрел ответ на этот вопрос паскуденыш!!!"
+            uiQuestion += "\n\nВы воспользовались подсказкой на этом вопросе"
         }
 
-
         questionTextView.text = uiQuestion
+
+        numberOfHintsTextView.setText("У вас осталось ${quizViewModel.numberOfHints} подсказок")
+
+        if (quizViewModel.numberOfHints ==0 ){
+            cheatButton.isEnabled = false
+        }
 
         if (quizViewModel.currentQuestionUserAnswer !== null) {
             trueButton.isEnabled = false
@@ -149,6 +160,7 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_CODE_CHEAT) {
             quizViewModel.isCheater = data?.getBooleanExtra(EXTRA_ANSWER_SHOWN,false) ?: false
+            updateQuestion()
         }
     }
 }
